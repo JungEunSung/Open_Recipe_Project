@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boot.store.items.dao.ItemsDao">
+
+	<sql id="itemsSearch">
+		<if test="search=='i_name'">
+			<![CDATA[i_name LIKE '%' || #{keyword} || '%']]>
+		</if>
+		<if test="search=='i_parts'">
+			<![CDATA[i_parts LIKE '%' || #{keyword} || '%']]>
+		</if>
+	</sql>
+
+	<select id="itemsList" parameterType="items" resultType="items">
+		select rnum, i_num, i_parts, i_name, i_price, i_quan, i_img
+		from (select 
+				rownum as rnum, i_num, i_parts, i_name, i_price, i_quan, i_img
+      		  from items
+      		  where
+      	<trim prefix="(" suffix=") AND" prefixOverrides="AND">
+			<include refid="itemsSearch"></include>
+		</trim>
+		<![CDATA[ rownum <= #{pageNum} * #{amount}
+				) itemsList
+		where rnum > (#{pageNum}-1) * #{amount}
+		]]>
+	</select>
+	
+	
+	<insert id="insertItems" parameterType="items">
+		<selectKey keyProperty="i_num" resultType="int" order="BEFORE">
+			select seq_items.nextval from dual
+		</selectKey>
+		
+		insert into items
+		values(#{i_num}, #{i_parts}, #{i_name}, nvl(#{i_price}, 0), #{i_quan}, #{i_img})
+	</insert>
+	
+	<select id="itemsDetail" parameterType="items" resultType="items">
+		select i_num, i_parts, i_name, i_price, i_quan, i_img
+		from items
+		where i_num = #{i_num}
+	</select>
+	
+	<update id="updateItemsQuan" parameterType="items">
+		<selectKey keyProperty="i_quan" resultType="int" order="BEFORE">
+			select i_quan - #{i_quan}
+			from items
+			where i_num = #{i_num}
+		</selectKey>
+		
+		update items
+		set i_quan = #{i_quan}
+		where i_num = #{i_num}
+	</update>
+	
+	<select id="itemsCnt" resultType="int">
+		select count(*)
+		from items
+	</select>
+	
+	<update id="updateItem" parameterType="items">
+		update items
+		set i_name = #{i_name}, i_price = #{i_price}, i_quan = #{i_quan}, i_img = #{i_img}
+		where i_num = #{i_num}
+	</update>
+	
+	<delete id="deleteItem" parameterType="items">
+		delete from items
+		where i_num = #{i_num}
+	</delete>
+	
+	<select id="relatedItems" parameterType="items" resultType="items">
+		select i_num, i_parts, i_name, i_price, i_quan, i_img
+		from items 
+		where i_parts= #{i_parts} 
+		and <![CDATA[rownum <= 5 ]]>
+		and i_num != #{i_num}
+		order by dbms_random.value
+	</select>
+</mapper>
