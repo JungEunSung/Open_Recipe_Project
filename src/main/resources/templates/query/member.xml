@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.boot.client.member.dao.MemberDao">
+
+	<select id="loginProcess" resultType="MemberVO" parameterType="MemberVO">
+		select *
+		from MEMBER
+		where m_id=#{m_id} and m_pwd=#{m_pwd}
+	</select>
+	
+	<insert id="joinProcess" parameterType="MemberVO">
+		insert into MEMBER
+		values(SEQ_MEMBER.nextval,#{m_name},#{m_id},#{m_pwd},#{m_phone},#{m_email},#{m_zip},#{m_address},sysdate,sysdate)
+	</insert>
+	
+	<select id="idChk" resultType="int" parameterType="MemberVO">
+		select count(*)
+		from MEMBER
+		where m_id=#{m_id}
+	</select>
+	
+	<select id="myPage" resultType="MemberVO" parameterType="MemberVO">
+		select *
+		from MEMBER
+		where m_num = #{m_num}
+	</select>
+	
+	<select id="updatePwdConfirm" parameterType="MemberVO" resultType="int">
+		SELECT NVL((
+			          SELECT 1 FROM MEMBER
+			          WHERE m_num = #{m_num} AND m_pwd = #{m_pwd}
+			       ), 0) as state
+		FROM dual 
+	</select>
+	
+	<update id="memberUpdate" parameterType="MemberVO">
+	 	update MEMBER
+	 	set
+	 	m_name = #{m_name},
+	 	m_pwd = #{m_pwd},
+	 	m_phone = #{m_phone},
+	 	m_email = #{m_email},
+	 	m_zip = #{m_zip},
+	 	m_address = #{m_address}
+		where m_num = #{m_num}
+	</update>
+	
+	<delete id="memberDelete" parameterType="MemberVO">
+		delete from member
+		where m_num = #{m_num}
+	</delete>
+	
+	
+	<select id="recipeCheck" resultType="com.boot.client.member.vo.MypageVO" parameterType="int">
+		SELECT recipe.rcp_seq, recipe.rcp_nm , recipe.rcp_pat2 , recipe.info_eng , recipe.rcp_parts_dtls
+		FROM recipe
+		INNER JOIN rcp_like ON recipe.rcp_seq = rcp_like.rcp_seq
+		INNER JOIN member ON member.m_num = rcp_like.m_num
+		WHERE member.m_num = #{m_num} AND rcp_like.RCPLIKE_STATUS = 1
+	</select>
+	
+	<select id="commCheck" resultType="comVO" parameterType="int">
+		select c_no, c_title , C_CATEGORY ,C_READCNT , to_char(c_reg_date,'YYYY-MM-DD') as c_reg_date
+		FROM COMMUNITY
+		WHERE M_NUM = #{m_num}
+	</select>
+		
+</mapper>
