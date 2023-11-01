@@ -21,11 +21,11 @@
 
 메모장에 사야 될 것, 또는 기억해야 될 재료에 관해 메모 가능! 
 ~~~
-JungEunSung
+
 
 ## 📍 팀원 소개
 <div align="center">
-  <img width="850" height="400" alt="스크린샷 2023-05-25 오후 7 24 22" src="https://github.com/JungEunSung/KH_Recipe_Project/assets/110451636/ab39e2ab-810f-4642-8436-46d478eb7922">
+  <img width="850" height="400" alt="스크린샷 2023-05-25 오후 7 24 22" src="https://github.com/hyoozo/KH_Recipe_Project/assets/110451636/ab39e2ab-810f-4642-8436-46d478eb7922">
 </div>
 
 ## 📍 프로젝트 사용 기술
